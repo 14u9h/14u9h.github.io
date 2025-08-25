@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+ <head>
+     <meta charset="utf-8" />
+  <title>Ubuntu_Docker拉取速度优化 | 14u9h&#39;Blog</title>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+  <link rel="stylesheet" href="https://blog.dp7.xyz/styles/main.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.9.0/highlightjs-line-numbers.min.js"></script> -->
+  <!-- 行号加上样式就有问题了，暂时不加 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      hljs.highlightAll();
+      hljs.initLineNumbersOnLoad();
+    });
+  </script>
+ </head>
+ <body>
+     <div class="sidebar animated fadeInDown">
+   <div class="logo-title">
+    <div class="title">
+     <img class="avatar" src="https://blog.dp7.xyz/images/avatar.png?v=1756089800663" width="180" height="128" />
+
+     <div class="description">
+      <p>#流水不腐，户枢不蠹。</p>
+     </div>
+    </div>
+   </div>
+   <ul class="social-links">
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+   </ul>
+   <div class="footer">
+    <div class="by_farbox">
+   Powered by <a href="https://github.com/14u9h/" target="_blank">14u9h</a>
+    </div>
+    
+
+    </div>
+   </div>
+  </div>
+  <div class="main">
+     <div class="page-top animated fadeInDown">
+    <div class="nav">
+    
+     <li><a  href="/">首页</a></li>
+
+     <li><a  href="/archives">归档</a></li>
+
+     <li><a  href="/tags">标签</a></li>
+
+     <li><a  href="/post/about">关于</a></li>
+
+     <li><a  href="/post/Links">友链</a></li>
+
+    </div>
+    <div class="information">
+     <div class="back_btn">
+      <li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li>
+     </div>
+    </div>
+   </div>
+   <div class="autopagerize_page_element">
+    <div class="content">
+     <div class="post-page">
+      <div class="post animated fadeInDown">
+       <div class="post-title">
+        <h3><a>Ubuntu_Docker拉取速度优化</a></h3>
+       </div>
+       <div class="post-content">
+        <h4 id="docker更换为国内镜像">docker更换为国内镜像</h4>
+<p>由于网络传输及限制原因，在国内访问Doker官方镜像慢如蜗牛，为了加快访问速度珍惜时间，将官方源配置为国内源，国内常用的有：网易、USTC、阿里云。</p>
+<!-- more -->
+<p>我们这里改为家大业大的阿里源：</p>
+<pre class="hljs-pre"><code class="hljs ">pc@ubuntu:~$ sudo vim /etc/docker/daemon.json
+</code></pre>
+<pre class="hljs-pre"><code class="hljs ">{
+&quot;registry-mirrors&quot;: [&quot;https://b******.mirror.aliyuncs.com&quot;]
+}
+//https://b******.mirror.aliyuncs.com	docker加速源，需要自己申请。
+我的加速地址就不放公开博客里了
+申请访问 https://www.aliyun.com 注册自己的帐号
+然后点击控制台——&gt;产品与服务——&gt;容器镜像服务。
+</code></pre>
+<pre class="hljs-pre"><code class="hljs ">pc@ubuntu:~$ systemctl daemon-reload
+pc@ubuntu:~$ systemctl restart docker	#重启docker
+</code></pre>
+
+       </div>
+       <div class="post-footer">
+        <div class="meta">
+         <div class="info">
+          <i class="fa fa-sun-o"></i>
+          <span class="date">2019-12-02</span>
+          <i class="fa fa-tag"></i>
+          
+          <a class="tag" href="https://blog.dp7.xyz/tag/zAYYzrgy7/" title="日常技巧">日常技巧 </a>
+          
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="share">
+       <div class="evernote">
+        <a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a>
+       </div>
+       <div class="weibo">
+        <a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a>
+       </div>
+       <div class="twitter">
+        <a class="fa fa-twitter" href="http://twitter.com/home?status=,https://blog.dp7.xyz/post/PL1JtKiJW/,;"></a>
+       </div>
+      </div>
+      <div class="pagination">
+       <ul class="clearfix">
+
+        <li class="pre pagbuttons"><a class="btn" role="navigation" href="https://blog.dp7.xyz/post/CVE-2018-8581/" title="Microsoft Exchange任意用户伪造漏洞(CVE-2018-8581)复现">上一篇</a></li>
+         
+        
+        <li class="next pagbuttons"><a class="btn" role="navigation" href="https://blog.dp7.xyz/post/ehjUeCg27/" title=" WordPress后台拿shell">下一篇</a></li>
+        
+       </ul>
+      </div>
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'dce8c8190903e67ed74c',
+    clientSecret: 'ec34e710b1d3b83c7911d1895c48ddb0e7014dd0',
+    repo: '14u9h.github.io',
+    owner: '14u9h',
+    admin: ['14u9h'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+          
+        
+     </div>
+    </div>
+   </div>
+  </div>
+ <script src="https://blog.dp7.xyz/media/scripts/jquery.js"></script>
+  <script src="https://blog.dp7.xyz/media/scripts/jquery-migrate-1.2.1.min.js"></script>
+  <script src="https://blog.dp7.xyz/media/scripts/jquery.appear.js"></script>
+
+
+ </body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+ <head>
+     <meta charset="utf-8" />
+  <title>PHP审计实战-bluecms审计_XSS | 14u9h&#39;Blog</title>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+  <link rel="stylesheet" href="https://blog.dp7.xyz/styles/main.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.9.0/highlightjs-line-numbers.min.js"></script> -->
+  <!-- 行号加上样式就有问题了，暂时不加 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      hljs.highlightAll();
+      hljs.initLineNumbersOnLoad();
+    });
+  </script>
+ </head>
+ <body>
+     <div class="sidebar animated fadeInDown">
+   <div class="logo-title">
+    <div class="title">
+     <img class="avatar" src="https://blog.dp7.xyz/images/avatar.png?v=1756089800663" width="180" height="128" />
+
+     <div class="description">
+      <p>#流水不腐，户枢不蠹。</p>
+     </div>
+    </div>
+   </div>
+   <ul class="social-links">
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+   </ul>
+   <div class="footer">
+    <div class="by_farbox">
+   Powered by <a href="https://github.com/14u9h/" target="_blank">14u9h</a>
+    </div>
+    
+
+    </div>
+   </div>
+  </div>
+  <div class="main">
+     <div class="page-top animated fadeInDown">
+    <div class="nav">
+    
+     <li><a  href="/">首页</a></li>
+
+     <li><a  href="/archives">归档</a></li>
+
+     <li><a  href="/tags">标签</a></li>
+
+     <li><a  href="/post/about">关于</a></li>
+
+     <li><a  href="/post/Links">友链</a></li>
+
+    </div>
+    <div class="information">
+     <div class="back_btn">
+      <li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li>
+     </div>
+    </div>
+   </div>
+   <div class="autopagerize_page_element">
+    <div class="content">
+     <div class="post-page">
+      <div class="post animated fadeInDown">
+       <div class="post-title">
+        <h3><a>PHP审计实战-bluecms审计_XSS</a></h3>
+       </div>
+       <div class="post-content">
+        <h3 id="熟悉情况">熟悉情况</h3>
+<p>照例先简单看看<em>目录</em>、<em>首页文件</em>、<em>配置文件</em>、<em>过滤函数</em>等。<br>
+首页就引用了两个php文件和首页html文件</p>
+<!-- more -->
+<pre class="hljs-pre"><code class="hljs ">include/common.inc.php
+include/index.fun.php
+/index.html
+</code></pre>
+<p>(粗略过了几个php文件，都引用了common.inc.php，如果有全局过滤，那么十有八九就在这里)<br>
+在common.inc.php文件的get_magic_quotes_gpc()中，发现对<code>$_POST</code>、<code>$_GET</code>、<code>$_COOKIES</code>、<code>$_REQUEST</code>统一进行了过滤，使用addslashes()函数</p>
+<p>后面路由方式什么的就不重复说了，在这里做过了：<a href="https://blog.dp7.xyz/post/p1bHKt6UWT/">PHP审计实战-bluecms审计_SQLi</a></p>
+<h3 id="功能点方式审计">功能点方式审计</h3>
+<p><strong>找输出点：</strong><br>
+XSS先找输出然后找输入点，这样来比较快，以目标为导向<br>
+场景设置为前台打后台，这里找到了会员列表：<br>
+<img src="https://blog.dp7.xyz/post-images/1741249835964.png" alt="" loading="lazy"><br>
+上图没有体现到，点击到&quot;会员列表&quot;后的url是：/admin/user.php<br>
+取出会员数据也没做任何处理直接发给了user.html：<br>
+<img src="https://blog.dp7.xyz/post-images/1741249855842.png" alt="" loading="lazy"><br>
+展示HTML代码：<br>
+<img src="https://blog.dp7.xyz/post-images/1741249869920.png" alt="" loading="lazy"></p>
+<p><strong>找输入点：</strong><br>
+因为是为了前台打到后台，所以找的前台注册，后台的新建会员也是在输出点的admin/user.php文件中，但在这里不去看它。<br>
+前面取数据输出点没做处理，现在来看看输入点有没有处理：<br>
+<img src="https://blog.dp7.xyz/post-images/1741249888354.png" alt="" loading="lazy"><br>
+根目录下/user.php是前台的会员注册：<br>
+可以看到，user_name、pwd、email都没做过滤处理，不过user_name用户名长度有限制，最长不能超过16位，没关系，email没做限制<br>
+<img src="https://blog.dp7.xyz/post-images/1741249901936.png" alt="" loading="lazy"><br>
+Payload:<code>1%40qq.com&lt;script&gt;alert(/XSS/)&lt;/script&gt;</code><br>
+<img src="https://blog.dp7.xyz/post-images/1741249913420.png" alt="" loading="lazy"><br>
+后台触发：<br>
+<img src="https://blog.dp7.xyz/post-images/1741249924081.png" alt="" loading="lazy"><br>
+<img src="https://blog.dp7.xyz/post-images/1741249937634.png" alt="" loading="lazy"></p>
+
+       </div>
+       <div class="post-footer">
+        <div class="meta">
+         <div class="info">
+          <i class="fa fa-sun-o"></i>
+          <span class="date">2025-03-01</span>
+          <i class="fa fa-tag"></i>
+          
+          <a class="tag" href="https://blog.dp7.xyz/tag/Xwq2QS4kYK/" title="代码审计">代码审计 </a>
+          
+          <a class="tag" href="https://blog.dp7.xyz/tag/DScmXl42K/" title="安全学习">安全学习 </a>
+          
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="share">
+       <div class="evernote">
+        <a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a>
+       </div>
+       <div class="weibo">
+        <a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a>
+       </div>
+       <div class="twitter">
+        <a class="fa fa-twitter" href="http://twitter.com/home?status=,https://blog.dp7.xyz/post/wMjErW_kp5/,;"></a>
+       </div>
+      </div>
+      <div class="pagination">
+       <ul class="clearfix">
+
+        <li class="pre pagbuttons"><a class="btn" role="navigation" href="https://blog.dp7.xyz/post/0QW-U48nQ_/" title="PHP审计实战-PHP开源探针SQLi">上一篇</a></li>
+         
+        
+        <li class="next pagbuttons"><a class="btn" role="navigation" href="https://blog.dp7.xyz/post/p1bHKt6UWT/" title=" PHP代码审计_bluecms_SQLi">下一篇</a></li>
+        
+       </ul>
+      </div>
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'dce8c8190903e67ed74c',
+    clientSecret: 'ec34e710b1d3b83c7911d1895c48ddb0e7014dd0',
+    repo: '14u9h.github.io',
+    owner: '14u9h',
+    admin: ['14u9h'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+          
+        
+     </div>
+    </div>
+   </div>
+  </div>
+ <script src="https://blog.dp7.xyz/media/scripts/jquery.js"></script>
+  <script src="https://blog.dp7.xyz/media/scripts/jquery-migrate-1.2.1.min.js"></script>
+  <script src="https://blog.dp7.xyz/media/scripts/jquery.appear.js"></script>
+
+
+ </body>
+</html>

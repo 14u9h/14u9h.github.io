@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+ <head>
+     <meta charset="utf-8" />
+  <title>黑苹果折腾记录(OC引导) | 14u9h&#39;Blog</title>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+  <link rel="stylesheet" href="https://blog.dp7.xyz/styles/main.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.9.0/highlightjs-line-numbers.min.js"></script> -->
+  <!-- 行号加上样式就有问题了，暂时不加 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      hljs.highlightAll();
+      hljs.initLineNumbersOnLoad();
+    });
+  </script>
+ </head>
+ <body>
+     <div class="sidebar animated fadeInDown">
+   <div class="logo-title">
+    <div class="title">
+     <img class="avatar" src="https://blog.dp7.xyz/images/avatar.png?v=1756089800663" width="180" height="128" />
+
+     <div class="description">
+      <p>#流水不腐，户枢不蠹。</p>
+     </div>
+    </div>
+   </div>
+   <ul class="social-links">
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+   </ul>
+   <div class="footer">
+    <div class="by_farbox">
+   Powered by <a href="https://github.com/14u9h/" target="_blank">14u9h</a>
+    </div>
+    
+
+    </div>
+   </div>
+  </div>
+  <div class="main">
+     <div class="page-top animated fadeInDown">
+    <div class="nav">
+    
+     <li><a  href="/">首页</a></li>
+
+     <li><a  href="/archives">归档</a></li>
+
+     <li><a  href="/tags">标签</a></li>
+
+     <li><a  href="/post/about">关于</a></li>
+
+     <li><a  href="/post/Links">友链</a></li>
+
+    </div>
+    <div class="information">
+     <div class="back_btn">
+      <li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li>
+     </div>
+    </div>
+   </div>
+   <div class="autopagerize_page_element">
+    <div class="content">
+     <div class="post-page">
+      <div class="post animated fadeInDown">
+       <div class="post-title">
+        <h3><a>黑苹果折腾记录(OC引导)</a></h3>
+       </div>
+       <div class="post-content">
+        <p>由于入了个二手笔记本专门做渗透测试用，喜新厌旧的我并不打算折腾早已熟悉的Windows系统，而国内软件环境又不适配Linux的平台，本着在折腾下求安稳的初心，打算这次折腾一下黑苹果。<br>
+本次是OpenCore引导安装，Clover引导安装的方法也跟这差不多，唯一不同的可能就是EFI引导文件</p>
+<!-- more -->
+<h1 id="下载镜像文件">下载镜像文件</h1>
+<p>镜像文件可以去如下渠道获得：</p>
+<ol>
+<li>[ 黑果小兵部落阁| 荐 ]<a href="https://blog.daliansky.net/">https://blog.daliansky.net/</a></li>
+<li>[ 黑苹果社区 ]<a href="https://osx.cx/">https://osx.cx/</a></li>
+</ol>
+<p>当然，不建议为了求最新版去尝试官方(苹果)刚出炉的版本，可以等苹果飞一会儿，把大的问题修复好了出的镜像文件可以尝试。<br>
+（注意后期苹果或许不支持INTEL平台芯片也说不定）<br>
+我这里下载的是黑果小兵的“macOS Big Sur 11.4 20F71 Installer for OpenCore 0.6.9 and CLOVER 5134 and PE三EFI分区原版镜像”，集合了OC引导、CLOVER引导、WIN PE引导的镜像，下面硬盘设置的操作得进WIN PE里。</p>
+<h1 id="制作u盘启动">制作U盘启动</h1>
+<p>GUI图形程序的U盘启动制作有如下两常见的工具：</p>
+<ol>
+<li>[ balenaEtcher ]<a href="https://www.balena.io/etcher/">https://www.balena.io/etcher/</a></li>
+<li>[ Transmac ]<a href="https://transmac.en.softonic.com/">https://transmac.en.softonic.com/</a></li>
+</ol>
+<p>这种都是差不多使用效果，只是操作的差异，还有TransMac试用期时间限制，但不影响我们暂时使用。<br>
+<strong>注意⚠！Windows 10下这俩都必须右键&quot;以管理员身份运行&quot;</strong><br>
+<img src="https://blog.dp7.xyz/post-images/1617074207531.png" alt="" loading="lazy"><br>
+balenaEtcher按照上面图的步骤来就行了，特别注意要以管理员身份运行。</p>
+<p><img src="https://blog.dp7.xyz/post-images/1617074553521.png" alt="" loading="lazy"><br>
+TransMac按照上图步骤来就行，特别注意要以管理员身份运行。</p>
+<h1 id="替换oc引导文件">替换OC引导文件</h1>
+<p>这一步是最重要也是最麻烦的，重要的是：没这步可能无法进去U盘启动，麻烦的是：你得找到刚好有你的型号计算机的OC引导文件，而且各项驱动问题也得这样碰运气去找大神的成品（你自己就是大神另说）。<br>
+下面的[黑果小兵]整理的引导文件维护清单，可以在里面找到自己的机型，若链接中没有OC/OpenCore引导的文件，可以直接换Clover引导方式进行安装。</p>
+<p>[Hackintosh长期维护清单]<a href="https://blog.daliansky.net/Hackintosh-long-term-maintenance-model-checklist.html">https://blog.daliansky.net/Hackintosh-long-term-maintenance-model-checklist.html</a></p>
+<p>这里用DELL Vostro 5401作演示，可以看到里面EFI文件夹下有BOOT/与OC/目录文件，OC说明是给OpenCore引导用的，下载下来。<br>
+<img src="https://blog.dp7.xyz/post-images/1617078805357.png" alt="" loading="lazy"><br>
+然后使用Diskgenius工具找到你的U盘下ESP分区中的EFI/目录，将里面的BOOT/与OC/文件夹及里面的文件删除并用下载的BOOT/与OC/替换掉，只替换OC也行，只要安装黑苹果时不出问题.<br>
+<strong>这里需要注意的是，每个人维护的文件各不相同，你可能需要对比一下你的机型文件维护者给出了哪些文件，需要放到UEFI目录下那个子文件里或者直接放到UEFI根目录下</strong><br>
+<img src="https://blog.dp7.xyz/post-images/1617079330749.png" alt="" loading="lazy"><br>
+至此，U盘启动制作完毕，下面就是设置要安装黑苹果的设备的一些准备工作了。</p>
+<h1 id="bios设置">BIOS设置</h1>
+<p>我这里只列出基本的禁用或启用列表，具体的还请去[黑果小兵部落阁]自行对比</p>
+<p>Fast Boot - 快速启动 [禁用]<br>
+Secure Boot - 安全启动 [禁用]<br>
+UEFI Boot Mode - UEFI模式启动 [启用]<br>
+Legacy RTC Device - 传统RTC设备 [启用]<br>
+硬盘模式改为：AHCI。不能用IDE和RST RAID。</p>
+<h1 id="硬盘设置">硬盘设置</h1>
+<p>因为我使用的是双UEFI引导方式，UEFI 1是黑苹果引导安装、UEFI 2是Windows PE，这里我们进入PE系统进行操作。<br>
+使用管理员打开Diskgenius软件，选中目标硬盘，右击选择&quot;转换分区表类型为GUID格式&quot;，转换完成后清空目标硬盘所有分配空间，让其为&quot;空闲&quot;状态，然后保存设置。<br>
+<img src="https://blog.dp7.xyz/post-images/1617080085184.png" alt="" loading="lazy"><br>
+第二步：目标硬盘建立新分区，然后勾选中&quot;ESP分区&quot;，分区大小必须大于200M，然后我们将剩余的空磁盘新建分区为NTFS格式，安装时会将此盘抹除成APFS格式，然后保存更改。（然后去&quot;我的电脑&quot;中将该盘名字改为中文，防止出现编码问题。）<br>
+<img src="https://blog.dp7.xyz/post-images/1617080510058.png" alt="" loading="lazy"><br>
+<img src="https://blog.dp7.xyz/post-images/1617080767765.png" alt="" loading="lazy"><br>
+<img src="https://blog.dp7.xyz/post-images/1617080802792.png" alt="" loading="lazy"></p>
+<h1 id="安装系统">安装系统</h1>
+<p>重启根据不同品牌电脑按F12或F9选择UEFI引导安装。</p>
+<p>下面不想写了，等以后有空了再补吧，反正就是进入黑苹果系统后使用工具将UEFI引导文件换成苹果的文件，这样就不用每次进系统都要选择苹果的UEFI选项了。</p>
+
+       </div>
+       <div class="post-footer">
+        <div class="meta">
+         <div class="info">
+          <i class="fa fa-sun-o"></i>
+          <span class="date">2021-03-30</span>
+          <i class="fa fa-tag"></i>
+          
+          <a class="tag" href="https://blog.dp7.xyz/tag/zAYYzrgy7/" title="日常技巧">日常技巧 </a>
+          
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="share">
+       <div class="evernote">
+        <a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a>
+       </div>
+       <div class="weibo">
+        <a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a>
+       </div>
+       <div class="twitter">
+        <a class="fa fa-twitter" href="http://twitter.com/home?status=,https://blog.dp7.xyz/post/PfTqFEIvT/,;"></a>
+       </div>
+      </div>
+      <div class="pagination">
+       <ul class="clearfix">
+
+        <li class="pre pagbuttons"><a class="btn" role="navigation" href="https://blog.dp7.xyz/post/l0y3rpLKA/" title="《致橡树》">上一篇</a></li>
+         
+        
+        <li class="next pagbuttons"><a class="btn" role="navigation" href="https://blog.dp7.xyz/post/hrkXnfnPH/" title=" Setoolkit工具克隆网站钓鱼攻击">下一篇</a></li>
+        
+       </ul>
+      </div>
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'dce8c8190903e67ed74c',
+    clientSecret: 'ec34e710b1d3b83c7911d1895c48ddb0e7014dd0',
+    repo: '14u9h.github.io',
+    owner: '14u9h',
+    admin: ['14u9h'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+          
+        
+     </div>
+    </div>
+   </div>
+  </div>
+ <script src="https://blog.dp7.xyz/media/scripts/jquery.js"></script>
+  <script src="https://blog.dp7.xyz/media/scripts/jquery-migrate-1.2.1.min.js"></script>
+  <script src="https://blog.dp7.xyz/media/scripts/jquery.appear.js"></script>
+
+
+ </body>
+</html>

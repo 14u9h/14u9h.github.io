@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+ <head>
+     <meta charset="utf-8" />
+  <title>Tools | 14u9h&#39;Blog</title>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+  <link rel="stylesheet" href="https://blog.dp7.xyz/styles/main.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.9.0/highlightjs-line-numbers.min.js"></script> -->
+  <!-- 行号加上样式就有问题了，暂时不加 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      hljs.highlightAll();
+      hljs.initLineNumbersOnLoad();
+    });
+  </script>
+ </head>
+ <body>
+     <div class="sidebar animated fadeInDown">
+   <div class="logo-title">
+    <div class="title">
+     <img class="avatar" src="https://blog.dp7.xyz/images/avatar.png?v=1756089800663" width="180" height="128" />
+
+     <div class="description">
+      <p>#流水不腐，户枢不蠹。</p>
+     </div>
+    </div>
+   </div>
+   <ul class="social-links">
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+   </ul>
+   <div class="footer">
+    <div class="by_farbox">
+   Powered by <a href="https://github.com/14u9h/" target="_blank">14u9h</a>
+    </div>
+    
+
+    </div>
+   </div>
+  </div>
+  <div class="main">
+     <div class="page-top animated fadeInDown">
+    <div class="nav">
+    
+     <li><a  href="/">首页</a></li>
+
+     <li><a  href="/archives">归档</a></li>
+
+     <li><a  href="/tags">标签</a></li>
+
+     <li><a  href="/post/about">关于</a></li>
+
+     <li><a  href="/post/Links">友链</a></li>
+
+    </div>
+    <div class="information">
+     <div class="back_btn">
+      <li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li>
+     </div>
+    </div>
+   </div>
+   <div class="autopagerize_page_element">
+    <div class="content">
+     <div class="post-page">
+      <div class="post animated fadeInDown">
+       <div class="post-title">
+        <h3><a>Tools</a></h3>
+       </div>
+       <div class="post-content">
+        <p>参加某省攻防演练，不允许使用自己电脑，先暂时把这些常用的工具记录一下，然后折腾到分配的电脑上，当然，包括但不限于这些工具，没时间整理了！先就这些吧都是信息收集的工具。</p>
+<!-- more -->
+<h3 id="信息收集">信息收集</h3>
+<h4 id="fofax">FofaX：</h4>
+<h5 id="macoslinux">MacOS/Linux</h5>
+<p>可以将下载的 FoFaX 压缩包解压放在 /usr/local/bin/ 目录下，这样的好处是在终端任何一个位置都可以使用这个命令。</p>
+<pre class="hljs-pre"><code class="hljs ">tar -zxvf ~/Downloads/fofax_v0.1.26_darwin_amd64.tar.gz -C /usr/local/bin/
+</code></pre>
+<h5 id="使用">使用</h5>
+<pre class="hljs-pre"><code class="hljs ">fofax -q 'app=&quot;APACHE-Solr&quot;'
+</code></pre>
+<h4 id="httpx">HTTPX</h4>
+<h5 id="安装">安装</h5>
+<p>需要go1.17才能安装成功，或直接下载</p>
+<pre class="hljs-pre"><code class="hljs ">go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
+</code></pre>
+<h4 id="使用-2">使用</h4>
+<pre class="hljs-pre"><code class="hljs ">httpx --title --mc 200
+</code></pre>
+<h4 id="dirmap">dirmap</h4>
+<h5 id="安装-2">安装</h5>
+<pre class="hljs-pre"><code class="hljs ">git clone https://github.com/H4ckForJob/dirmap.git &amp;&amp; cd dirmap &amp;&amp; python3 -m pip install -r requirement.txt
+</code></pre>
+<h5 id="使用-3">使用</h5>
+<pre class="hljs-pre"><code class="hljs ">python3 dirmap.py -i http://127.0.0.1/ -lcf
+python3 dirmap.py -i 192.168.1.1-192.168.1.100 -lcf
+python3 dirmap.py -iF targets.txt -lcf
+</code></pre>
+<h4 id="fscan">fscan</h4>
+<h5 id="使用-4">使用</h5>
+<pre class="hljs-pre"><code class="hljs ">fscan_linux -h 192.168.1.1/24
+</code></pre>
+<h4 id="ksubdomain">KSubdomain</h4>
+<h5 id="使用-5">使用</h5>
+<pre class="hljs-pre"><code class="hljs ">./ksubdomain e -d staeco.cn
+</code></pre>
+<h4 id="ofx">oFx</h4>
+<h5 id="安装-3">安装</h5>
+<pre class="hljs-pre"><code class="hljs ">git clone --depth 1 https://github.com/bigblackhat/oFx.git oFx
+</code></pre>
+<h5 id="使用-6">使用</h5>
+<pre class="hljs-pre"><code class="hljs ">➜  oFx git:(main) ✗ python3 ofx.py -s poc/Jboss/Jboss_Unauthorized_access/poc.py -u xxx.xxx.xxx.xxx:xx
+
+➜  oFx git:(main) ✗ python3 ofx.py -s poc/Jboss/Jboss_Unauthorized_access/poc.py -f scan/jboss001.txt --thread 30
+
+➜  oFx git:(main) ✗ python3 ofx.py -s poc/Jboss/Jboss_Unauthorized_access/poc.py,poc/Jenkins/Unauth_Access/poc.py,poc/Alibaba_Druid/Unauth_Access/poc.py -f scan/jboss001.txt --thread 30
+
+➜  oFx git:(main) ✗ python3 ofx.py -s all -f scan/jboss001.txt --thread 50
+</code></pre>
+
+       </div>
+       <div class="post-footer">
+        <div class="meta">
+         <div class="info">
+          <i class="fa fa-sun-o"></i>
+          <span class="date">2022-07-03</span>
+          <i class="fa fa-tag"></i>
+          
+          <a class="tag" href="https://blog.dp7.xyz/tag/zgMUb1Arl/" title="神兵利器">神兵利器 </a>
+          
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="share">
+       <div class="evernote">
+        <a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a>
+       </div>
+       <div class="weibo">
+        <a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a>
+       </div>
+       <div class="twitter">
+        <a class="fa fa-twitter" href="http://twitter.com/home?status=,https://blog.dp7.xyz/post/g5TaCCT5s/,;"></a>
+       </div>
+      </div>
+      <div class="pagination">
+       <ul class="clearfix">
+
+        <li class="pre pagbuttons"><a class="btn" role="navigation" href="https://blog.dp7.xyz/post/dbYFb07Zc/" title="你好，2023">上一篇</a></li>
+         
+        
+        <li class="next pagbuttons"><a class="btn" role="navigation" href="https://blog.dp7.xyz/post/l0y3rpLKA/" title=" 《致橡树》">下一篇</a></li>
+        
+       </ul>
+      </div>
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'dce8c8190903e67ed74c',
+    clientSecret: 'ec34e710b1d3b83c7911d1895c48ddb0e7014dd0',
+    repo: '14u9h.github.io',
+    owner: '14u9h',
+    admin: ['14u9h'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+          
+        
+     </div>
+    </div>
+   </div>
+  </div>
+ <script src="https://blog.dp7.xyz/media/scripts/jquery.js"></script>
+  <script src="https://blog.dp7.xyz/media/scripts/jquery-migrate-1.2.1.min.js"></script>
+  <script src="https://blog.dp7.xyz/media/scripts/jquery.appear.js"></script>
+
+
+ </body>
+</html>

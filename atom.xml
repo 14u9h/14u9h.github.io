@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://blog.dp7.xyz</id>
+    <title>14u9h&apos;Blog</title>
+    <updated>2025-08-25T02:44:56.367Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://blog.dp7.xyz"/>
+    <link rel="self" href="https://blog.dp7.xyz/atom.xml"/>
+    <subtitle>#流水不腐，户枢不蠹。</subtitle>
+    <logo>https://blog.dp7.xyz/images/avatar.png</logo>
+    <icon>https://blog.dp7.xyz/favicon.ico</icon>
+    <rights>All rights reserved 2025, 14u9h&apos;Blog</rights>
+    <entry>
+        <title type="html"><![CDATA[PHP审计实战-PHP开源探针SQLi]]></title>
+        <id>https://blog.dp7.xyz/post/0QW-U48nQ_/</id>
+        <link href="https://blog.dp7.xyz/post/0QW-U48nQ_/">
+        </link>
+        <updated>2025-03-06T08:33:12.000Z</updated>
+        <summary type="html"><![CDATA[<p>审计项目：https://github.com/HurryBy/probe<br>
+在找IP探针的时候碰到的开源项目，遂审计之</p>
+<p>提交的ISSUES：https://github.com/HurryBy/probe/issues/2</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>审计项目：https://github.com/HurryBy/probe<br>
+在找IP探针的时候碰到的开源项目，遂审计之</p>
+<p>提交的ISSUES：https://github.com/HurryBy/probe/issues/2</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[PHP审计实战-bluecms审计_XSS]]></title>
+        <id>https://blog.dp7.xyz/post/wMjErW_kp5/</id>
+        <link href="https://blog.dp7.xyz/post/wMjErW_kp5/">
+        </link>
+        <updated>2025-03-01T08:29:38.000Z</updated>
+        <summary type="html"><![CDATA[<h3 id="熟悉情况">熟悉情况</h3>
+<p>照例先简单看看<em>目录</em>、<em>首页文件</em>、<em>配置文件</em>、<em>过滤函数</em>等。<br>
+首页就引用了两个php文件和首页html文件</p>
+]]></summary>
+        <content type="html"><![CDATA[<h3 id="熟悉情况">熟悉情况</h3>
+<p>照例先简单看看<em>目录</em>、<em>首页文件</em>、<em>配置文件</em>、<em>过滤函数</em>等。<br>
+首页就引用了两个php文件和首页html文件</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[PHP代码审计_bluecms_SQLi]]></title>
+        <id>https://blog.dp7.xyz/post/p1bHKt6UWT/</id>
+        <link href="https://blog.dp7.xyz/post/p1bHKt6UWT/">
+        </link>
+        <updated>2024-12-31T16:39:48.000Z</updated>
+        <summary type="html"><![CDATA[<h3 id="熟悉情况">熟悉情况</h3>
+<p>照例先简单看看<em>目录</em>、<em>首页文件</em>、<em>配置文件</em>、<em>过滤函数</em>等。<br>
+首页就引用了两个php文件和首页html文件</p>
+]]></summary>
+        <content type="html"><![CDATA[<h3 id="熟悉情况">熟悉情况</h3>
+<p>照例先简单看看<em>目录</em>、<em>首页文件</em>、<em>配置文件</em>、<em>过滤函数</em>等。<br>
+首页就引用了两个php文件和首页html文件</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Web狗的近源渗透记录]]></title>
+        <id>https://blog.dp7.xyz/post/IU7CgSD95M/</id>
+        <link href="https://blog.dp7.xyz/post/IU7CgSD95M/">
+        </link>
+        <updated>2024-11-02T09:07:16.000Z</updated>
+        <summary type="html"><![CDATA[<p>在我刚入行的时候，带头大哥总CPU我说：“作为一线的渗透测试人员，除了生孩子不会，其他东西都得会一些。”，时过境迁，我深以为然。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>在我刚入行的时候，带头大哥总CPU我说：“作为一线的渗透测试人员，除了生孩子不会，其他东西都得会一些。”，时过境迁，我深以为然。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[网络空间攻击链-Cyber Kill Chain]]></title>
+        <id>https://blog.dp7.xyz/post/4qWSrpXKM/</id>
+        <link href="https://blog.dp7.xyz/post/4qWSrpXKM/">
+        </link>
+        <updated>2023-03-03T02:37:39.000Z</updated>
+        <summary type="html"><![CDATA[<p>Cyber Kill Chain是由全球最大国防工业承包商&quot;洛克希德·马丁公司&quot;于2011年提出的网络安全威胁的杀伤链模型（普遍适用的网络攻击流程与防御概念，参考军事上的杀伤链(Kill Chain)概念），攻击链内容是将网络攻击分为七个阶段：侦察跟踪、武器构建、载荷投递、漏洞利用、安装植入、命令与控制、目标达成。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>Cyber Kill Chain是由全球最大国防工业承包商&quot;洛克希德·马丁公司&quot;于2011年提出的网络安全威胁的杀伤链模型（普遍适用的网络攻击流程与防御概念，参考军事上的杀伤链(Kill Chain)概念），攻击链内容是将网络攻击分为七个阶段：侦察跟踪、武器构建、载荷投递、漏洞利用、安装植入、命令与控制、目标达成。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[你好，2023]]></title>
+        <id>https://blog.dp7.xyz/post/dbYFb07Zc/</id>
+        <link href="https://blog.dp7.xyz/post/dbYFb07Zc/">
+        </link>
+        <updated>2022-12-31T06:01:31.000Z</updated>
+        <summary type="html"><![CDATA[<p><s>烦死了，想插个视频源预览一下结果客户端卡死了，又得重新编写，我刚刚写了什么来着</s></p>
+<p>很喜欢跟刚毕业的小伙子们共事潮气蓬勃的气氛太感染人了。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p><s>烦死了，想插个视频源预览一下结果客户端卡死了，又得重新编写，我刚刚写了什么来着</s></p>
+<p>很喜欢跟刚毕业的小伙子们共事潮气蓬勃的气氛太感染人了。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Tools]]></title>
+        <id>https://blog.dp7.xyz/post/g5TaCCT5s/</id>
+        <link href="https://blog.dp7.xyz/post/g5TaCCT5s/">
+        </link>
+        <updated>2022-07-03T13:07:38.000Z</updated>
+        <summary type="html"><![CDATA[<p>参加某省攻防演练，不允许使用自己电脑，先暂时把这些常用的工具记录一下，然后折腾到分配的电脑上，当然，包括但不限于这些工具，没时间整理了！先就这些吧都是信息收集的工具。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>参加某省攻防演练，不允许使用自己电脑，先暂时把这些常用的工具记录一下，然后折腾到分配的电脑上，当然，包括但不限于这些工具，没时间整理了！先就这些吧都是信息收集的工具。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[《致橡树》]]></title>
+        <id>https://blog.dp7.xyz/post/l0y3rpLKA/</id>
+        <link href="https://blog.dp7.xyz/post/l0y3rpLKA/">
+        </link>
+        <updated>2022-03-08T01:31:04.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[黑苹果折腾记录(OC引导)]]></title>
+        <id>https://blog.dp7.xyz/post/PfTqFEIvT/</id>
+        <link href="https://blog.dp7.xyz/post/PfTqFEIvT/">
+        </link>
+        <updated>2021-03-30T02:47:57.000Z</updated>
+        <summary type="html"><![CDATA[<p>由于入了个二手笔记本专门做渗透测试用，喜新厌旧的我并不打算折腾早已熟悉的Windows系统，而国内软件环境又不适配Linux的平台，本着在折腾下求安稳的初心，打算这次折腾一下黑苹果。<br>
+本次是OpenCore引导安装，Clover引导安装的方法也跟这差不多，唯一不同的可能就是EFI引导文件</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>由于入了个二手笔记本专门做渗透测试用，喜新厌旧的我并不打算折腾早已熟悉的Windows系统，而国内软件环境又不适配Linux的平台，本着在折腾下求安稳的初心，打算这次折腾一下黑苹果。<br>
+本次是OpenCore引导安装，Clover引导安装的方法也跟这差不多，唯一不同的可能就是EFI引导文件</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Setoolkit工具克隆网站钓鱼攻击]]></title>
+        <id>https://blog.dp7.xyz/post/hrkXnfnPH/</id>
+        <link href="https://blog.dp7.xyz/post/hrkXnfnPH/">
+        </link>
+        <updated>2020-12-22T07:14:05.000Z</updated>
+        <summary type="html"><![CDATA[<h3 id="使用场景">使用场景：</h3>
+<pre><code> 快速部署Setoolkit工具克隆目标站点实行钓鱼攻击，按照一贯的原则，快打快撤，用完即扔。
+</code></pre>
+<p>Setoolkit工具还是稍微有点臃肿了，一般用不到它的邮件伪造的鱼叉攻击和投递Payload这些模块，邮件还是要可视化比较容易观察视觉上的不妥，投递Payload适合使用CobaltStrike这款后渗透神器上的插件。</p>
+]]></summary>
+        <content type="html"><![CDATA[<h3 id="使用场景">使用场景：</h3>
+<pre><code> 快速部署Setoolkit工具克隆目标站点实行钓鱼攻击，按照一贯的原则，快打快撤，用完即扔。
+</code></pre>
+<p>Setoolkit工具还是稍微有点臃肿了，一般用不到它的邮件伪造的鱼叉攻击和投递Payload这些模块，邮件还是要可视化比较容易观察视觉上的不妥，投递Payload适合使用CobaltStrike这款后渗透神器上的插件。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Microsoft Exchange任意用户伪造漏洞(CVE-2018-8581)复现]]></title>
+        <id>https://blog.dp7.xyz/post/CVE-2018-8581/</id>
+        <link href="https://blog.dp7.xyz/post/CVE-2018-8581/">
+        </link>
+        <updated>2019-12-25T09:22:04.000Z</updated>
+        <summary type="html"><![CDATA[<p>这个故事发生在月黑风高的某天，基友A突然找我复现漏洞，一开始我是拒绝的，但转念一想，我们可都是社会主义的接班人，人类共同命运体未来的花骨朵儿，为了爱与和平我毅然决然的答应了复现漏洞的援助要求。<br>
+(重新改了一下标题，这次顶多算是漏洞复现流水账。)</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>这个故事发生在月黑风高的某天，基友A突然找我复现漏洞，一开始我是拒绝的，但转念一想，我们可都是社会主义的接班人，人类共同命运体未来的花骨朵儿，为了爱与和平我毅然决然的答应了复现漏洞的援助要求。<br>
+(重新改了一下标题，这次顶多算是漏洞复现流水账。)</p>
+]]></content>
+    </entry>
+</feed>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+ <head>
+     <meta charset="utf-8" />
+  <title>PHP审计实战-PHP开源探针SQLi | 14u9h&#39;Blog</title>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+  <link rel="stylesheet" href="https://blog.dp7.xyz/styles/main.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.9.0/highlightjs-line-numbers.min.js"></script> -->
+  <!-- 行号加上样式就有问题了，暂时不加 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      hljs.highlightAll();
+      hljs.initLineNumbersOnLoad();
+    });
+  </script>
+ </head>
+ <body>
+     <div class="sidebar animated fadeInDown">
+   <div class="logo-title">
+    <div class="title">
+     <img class="avatar" src="https://blog.dp7.xyz/images/avatar.png?v=1756089800663" width="180" height="128" />
+
+     <div class="description">
+      <p>#流水不腐，户枢不蠹。</p>
+     </div>
+    </div>
+   </div>
+   <ul class="social-links">
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+   </ul>
+   <div class="footer">
+    <div class="by_farbox">
+   Powered by <a href="https://github.com/14u9h/" target="_blank">14u9h</a>
+    </div>
+    
+
+    </div>
+   </div>
+  </div>
+  <div class="main">
+     <div class="page-top animated fadeInDown">
+    <div class="nav">
+    
+     <li><a  href="/">首页</a></li>
+
+     <li><a  href="/archives">归档</a></li>
+
+     <li><a  href="/tags">标签</a></li>
+
+     <li><a  href="/post/about">关于</a></li>
+
+     <li><a  href="/post/Links">友链</a></li>
+
+    </div>
+    <div class="information">
+     <div class="back_btn">
+      <li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li>
+     </div>
+    </div>
+   </div>
+   <div class="autopagerize_page_element">
+    <div class="content">
+     <div class="post-page">
+      <div class="post animated fadeInDown">
+       <div class="post-title">
+        <h3><a>PHP审计实战-PHP开源探针SQLi</a></h3>
+       </div>
+       <div class="post-content">
+        <p>审计项目：https://github.com/HurryBy/probe<br>
+在找IP探针的时候碰到的开源项目，遂审计之</p>
+<p>提交的ISSUES：https://github.com/HurryBy/probe/issues/2</p>
+<!-- more -->
+<p>/modules/getInformation/gps.php文件中第26行，在获取gps_longitude和gps_location值后直接使用了SQL语句将获得的两个值写入到数据库中，而这两个参数值通过自己构建POST包是可控的，当然可控的变量也包括&quot;key&quot;的值，并且程序没有做任何过滤</p>
+<pre class="hljs-pre"><code class="hljs hljs-php">    // 根据timestamp &amp; key写数据
+    $conn = new mysqli($db_host.&quot;:&quot;.$db_port, $db_user, $db_password, $db_name);
+    $sql = &quot;UPDATE `tanzhen_information` SET `gpsaddress` = '$gps_location', `gpsjing` = '$gps_longitude', `gpswei` = '$gps_latitude' WHERE `tanzhen_information`.`timestamp` = '$time' AND `tanzhen_information`.`keyvalue` = '$key';&quot;;
+</code></pre>
+<h3 id="过滤方式">过滤方式</h3>
+<p>后来发现开发更新了项目代码，那就来简单看看(水一下文)。<br>
+开发在各处都加上了过滤代码，使用了两个替换函数。<br>
+<strong>str_replace函数：替换字符</strong><br>
+<strong>preg_replace函数：正则匹配替换字符</strong><br>
+可以看到，str_replace函数将<code>&amp;</code>、尖括号替换成了实体符号，于sql注入无碍<br>
+下面将select等字符替换为空值，很明显双写绕过。</p>
+<pre class="hljs-pre"><code class="hljs hljs-php">//防xss mysql等注入
+
+$checkdata = $key;
+function clean($data){
+// Fix &amp;entity＼n;
+$data=str_replace(array('&amp;','&lt;','&gt;'),array('&amp;amp;','&amp;lt;','&amp;gt;'),$data);
+$data=preg_replace('/(&amp;#*＼w+)[＼x00-＼x20]+;/u','$1;',$data);
+$data=preg_replace('/(&amp;#x*[0-9A-F]+);*/iu','$1;',$data);
+$data=html_entity_decode($data,ENT_COMPAT,'UTF-8');
+$data=preg_replace('#&lt;/*＼w+:＼w[^&gt;]*+&gt;#i','',$data);
+do{// Remove really unwanted tags
+$old_data=$data;
+$data=preg_replace('#&lt;/*(?:applet|b(?:ase|gsound|link)|embed|frame(?:set)?|i(?:frame|layer)|l(?:ayer|ink)|meta|object|s(?:cript|tyle)|title|xml)[^&gt;]*+&gt;#i','',$data);
+}while($old_data!==$data);
+//remove javascript tag
+$data=preg_replace(&quot;/&lt;script[^&gt;]*?&gt;.*?&lt;\/script&gt;/si&quot;,' ',$data);
+$data=preg_replace('/select|insert|update|delete|\'|\\*|\*|\.\.\/|\.\/|union|into|load_file|outfile/i','',$data);
+
+// we are done...
+
+return $data;
+</code></pre>
+<h3 id="无效过滤">无效过滤</h3>
+<p>生成探针链接，会自动请求gps.php存储获取到的经纬度，更新前的漏洞也是交的这个issues<br>
+<img src="https://blog.dp7.xyz/post-images/1741250064629.png" alt="" loading="lazy"><br>
+但是仔细一看代码发现，这个gps.php文件压根儿没有被过滤函数覆盖到，依旧直接注入：<br>
+<img src="https://blog.dp7.xyz/post-images/1741250076249.png" alt="" loading="lazy"><br>
+<img src="https://blog.dp7.xyz/post-images/1741250088160.png" alt="" loading="lazy"><br>
+<img src="https://blog.dp7.xyz/post-images/1741250098894.png" alt="" loading="lazy"><br>
+<img src="https://blog.dp7.xyz/post-images/1741250109365.png" alt="" loading="lazy"></p>
+<h3 id="修复方案">修复方案</h3>
+<p>按照原程序中的方式，给gps.php文件里输入的经纬度值进行处理，key和time先不表，只是学习;<br>
+如果只是使用preg_replace()将匹配到的威胁字符替换为空，还是可以双写绕过，这里借用碰到的其他项目中的防御手段，在后面使用判断语句，通过判断输入的内容和处理过的内容是否一致来中断恶意行为，从而达到过滤效果。</p>
+<figure data-type="image" tabindex="1"><img src="https://blog.dp7.xyz/post-images/1741250120449.png" alt="" loading="lazy"></figure>
+
+       </div>
+       <div class="post-footer">
+        <div class="meta">
+         <div class="info">
+          <i class="fa fa-sun-o"></i>
+          <span class="date">2025-03-06</span>
+          <i class="fa fa-tag"></i>
+          
+          <a class="tag" href="https://blog.dp7.xyz/tag/Xwq2QS4kYK/" title="代码审计">代码审计 </a>
+          
+          <a class="tag" href="https://blog.dp7.xyz/tag/DScmXl42K/" title="安全学习">安全学习 </a>
+          
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="share">
+       <div class="evernote">
+        <a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a>
+       </div>
+       <div class="weibo">
+        <a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a>
+       </div>
+       <div class="twitter">
+        <a class="fa fa-twitter" href="http://twitter.com/home?status=,https://blog.dp7.xyz/post/0QW-U48nQ_/,;"></a>
+       </div>
+      </div>
+      <div class="pagination">
+       <ul class="clearfix">
+
+        
+        <li class="next pagbuttons"><a class="btn" role="navigation" href="https://blog.dp7.xyz/post/wMjErW_kp5/" title=" PHP审计实战-bluecms审计_XSS">下一篇</a></li>
+        
+       </ul>
+      </div>
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'dce8c8190903e67ed74c',
+    clientSecret: 'ec34e710b1d3b83c7911d1895c48ddb0e7014dd0',
+    repo: '14u9h.github.io',
+    owner: '14u9h',
+    admin: ['14u9h'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+          
+        
+     </div>
+    </div>
+   </div>
+  </div>
+ <script src="https://blog.dp7.xyz/media/scripts/jquery.js"></script>
+  <script src="https://blog.dp7.xyz/media/scripts/jquery-migrate-1.2.1.min.js"></script>
+  <script src="https://blog.dp7.xyz/media/scripts/jquery.appear.js"></script>
+
+
+ </body>
+</html>

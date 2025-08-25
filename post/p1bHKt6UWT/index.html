@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+ <head>
+     <meta charset="utf-8" />
+  <title>PHP代码审计_bluecms_SQLi | 14u9h&#39;Blog</title>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+  <link rel="stylesheet" href="https://blog.dp7.xyz/styles/main.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.9.0/highlightjs-line-numbers.min.js"></script> -->
+  <!-- 行号加上样式就有问题了，暂时不加 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      hljs.highlightAll();
+      hljs.initLineNumbersOnLoad();
+    });
+  </script>
+ </head>
+ <body>
+     <div class="sidebar animated fadeInDown">
+   <div class="logo-title">
+    <div class="title">
+     <img class="avatar" src="https://blog.dp7.xyz/images/avatar.png?v=1756089800663" width="180" height="128" />
+
+     <div class="description">
+      <p>#流水不腐，户枢不蠹。</p>
+     </div>
+    </div>
+   </div>
+   <ul class="social-links">
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+   </ul>
+   <div class="footer">
+    <div class="by_farbox">
+   Powered by <a href="https://github.com/14u9h/" target="_blank">14u9h</a>
+    </div>
+    
+
+    </div>
+   </div>
+  </div>
+  <div class="main">
+     <div class="page-top animated fadeInDown">
+    <div class="nav">
+    
+     <li><a  href="/">首页</a></li>
+
+     <li><a  href="/archives">归档</a></li>
+
+     <li><a  href="/tags">标签</a></li>
+
+     <li><a  href="/post/about">关于</a></li>
+
+     <li><a  href="/post/Links">友链</a></li>
+
+    </div>
+    <div class="information">
+     <div class="back_btn">
+      <li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li>
+     </div>
+    </div>
+   </div>
+   <div class="autopagerize_page_element">
+    <div class="content">
+     <div class="post-page">
+      <div class="post animated fadeInDown">
+       <div class="post-title">
+        <h3><a>PHP代码审计_bluecms_SQLi</a></h3>
+       </div>
+       <div class="post-content">
+        <h3 id="熟悉情况">熟悉情况</h3>
+<p>照例先简单看看<em>目录</em>、<em>首页文件</em>、<em>配置文件</em>、<em>过滤函数</em>等。<br>
+首页就引用了两个php文件和首页html文件</p>
+<!-- more -->
+<pre class="hljs-pre"><code class="hljs ">include/common.inc.php
+include/index.fun.php
+/index.html
+</code></pre>
+<p>(粗略过了几个php文件，都引用了common.inc.php，如果有全局过滤，那么十有八九就在这里)<br>
+在common.inc.php文件的get_magic_quotes_gpc()中，发现对<code>$_POST</code>、<code>$_GET</code>、<code>$_COOKIES</code>、<code>$_REQUEST</code>统一进行了过滤，使用addslashes()函数：<br>
+<img src="https://blog.dp7.xyz/post-images/1735663247802.png" alt="" loading="lazy"><br>
+不过挖洞这件事，它妙就妙在总能找到一条活路，比如它的数据库使用gb2312编码：<br>
+<img src="https://blog.dp7.xyz/post-images/1735663282318.png" alt="" loading="lazy"><br>
+<em>后记</em>：在搞明白这个程序的全局过滤的方法和缺点后，粗略定下绕过方向：</p>
+<ol>
+<li>数字型注入</li>
+<li>宽字节注入</li>
+<li>非请求方法输入点</li>
+</ol>
+<h3 id="搞懂路由">搞懂路由</h3>
+<p>搭建好后，新建个新闻分类和新闻内容，首先想看看前台有没有注入，这款bluecms的路由非常简单明了，就是php文件对应功能，参数也是在这个文件中select对应的数据内容，而不是什么参数对应什么目录什么文件。<br>
+http://cms:8811/news.php?id=1<br>
+<img src="https://blog.dp7.xyz/post-images/1735663347591.png" alt="" loading="lazy"></p>
+<h3 id="功能点方式审计">功能点方式审计</h3>
+<p><strong>评论处SQLi</strong>：<br>
+从程序的功能点作为审计方向，优点是速度快，缺点是<em>功能点触及不到的漏洞会被忽视</em>掉。<br>
+这里我选择新闻评论功能进行审计;<br>
+路径：<code>/comment.php?act=send</code><br>
+data: <code>mood=6&amp;comment=33&amp;id=1&amp;type=1&amp;submit=%CC%E1%BD%BB%C6%C0%C2%DB</code><br>
+<img src="https://blog.dp7.xyz/post-images/1735663388611.png" alt="" loading="lazy"><br>
+直接打开bluecms/comment.php文件，代码中变量<code>mood</code>、<code>type</code>、<code>id</code>使用了intval()函数只认数字类型值，变量<code>comment</code>则使用了htmlspecialchars()函数，将特殊字符HTML实体化，还有对各个请求方法的统一过滤(common.inc.php文件的get_magic_quotes_gpc())：<br>
+<img src="https://blog.dp7.xyz/post-images/1735663423093.png" alt="" loading="lazy"><br>
+不懂的函数方法就去php.net查询：<br>
+<img src="https://blog.dp7.xyz/post-images/1735663447498.png" alt="" loading="lazy"></p>
+<p>看下来参数都被过滤了，其他几个变量也不是可控变量(不是POST/REQUEST)，再仔细看看里面还有个getip()，是个获取用户IP的函数，有获取就一定有输入，<em>重要的是输入可不可控</em>。<br>
+getip()不走<code>$_POST/$_REQUEST</code>，也没有其他过滤<br>
+<img src="https://blog.dp7.xyz/post-images/1735663475561.png" alt="" loading="lazy"><br>
+看了getip()函数里的内容就大概知道是怎么回事了，请求信息头客户端IP字段<br>
+构造payload:<code>X-Forwarded-For: 127.0.0.1'</code><br>
+sqlmap直接能跑，但懒得贴出来占篇幅<br>
+<img src="https://blog.dp7.xyz/post-images/1735663505094.png" alt="" loading="lazy"></p>
+<p><strong>搜索处与登录处SQLi</strong>：<br>
+首先是<em>搜索处</em>，搜索URL直接是search.php，5个data参数<code>cid、aid、keywords、x、y</code>:<br>
+<img src="https://blog.dp7.xyz/post-images/1735663553470.png" alt="" loading="lazy"><br>
+打开search.php文件查看源码，前面定义其中三个参数时，<code>cid</code>和<code>aid</code>直接使用了intval()处理函数只接受数字类型值，不过<code>keywords</code>没有做什么处理，这里就是我们的机会，尝试宽字节绕全局过滤：<br>
+<img src="https://blog.dp7.xyz/post-images/1735663572674.png" alt="" loading="lazy"><br>
+<img src="https://blog.dp7.xyz/post-images/1735663588083.png" alt="" loading="lazy"><br>
+构建好请求包漏洞点后发给sqlmap直接跑：<br>
+因为是搜索型，不在后面加个百分号它不会跑出来，但其实监测数据库是可以看到它语句执行了的，还有个奇怪的就是，trim()函数按理说需要绕过空格，但在这里没起作用。<br>
+<img src="https://blog.dp7.xyz/post-images/1735663610874.png" alt="" loading="lazy"></p>
+<p><em>会员登录处</em>，就不跑了，也是能直接宽字节绕过，构建万能密码会提示“系统用户组不能从前台登录”，那说明后台可以直接用万能密码登录`b%df' or 1=1#<br>
+<img src="https://blog.dp7.xyz/post-images/1735663644535.png" alt="" loading="lazy"><br>
+<img src="https://blog.dp7.xyz/post-images/1735663656483.png" alt="" loading="lazy"></p>
+<h3 id="危险函数方式审计">危险函数方式审计</h3>
+<p>在这里其实是搜索代码中的sql语句拼接，严格意义上不能叫危险函数，不过管他呢。<br>
+VSCode正则搜索：<code>(update|select|insert|delete|).*?where.*=|INSERT INTO .*?</code><br>
+<img src="https://blog.dp7.xyz/post-images/1735663678701.png" alt="" loading="lazy"><br>
+ok，直接打开ad_js.php文件看一下，<code>$ad_id</code>直接拼接在sql语句里，不带引号，数字型注入，绕全局过滤的单引号过滤都免了，按照前面所知晓的路由方式，直接GET请求访问：<br>
+手注延时验证一下：<br>
+<img src="https://blog.dp7.xyz/post-images/1735663699356.png" alt="" loading="lazy"><br>
+<img src="https://blog.dp7.xyz/post-images/1735663712285.png" alt="" loading="lazy"></p>
+<h3 id="总结">总结</h3>
+<p>这是写给自己看的一篇文章，代码审计的学习一直拖拖拖，到现在终于打算捡起来，找了个审起来<em>特别简单的CMS</em>，主要还是找一找感觉，尽量详细，为之后的代码审计学习打个好头，做什么事都要找方向，学习、工作、哪怕是破案，找对找好方向才能事半功倍。<br>
+其实还是得把环境弄起来，什么断点然后debug一步一步的看，其他的洞估摸着要这么搞，不然显得不专业不是。</p>
+<p>2025年元旦发出，也是希望能开个好年，后面能多发一发博文，卷起来。</p>
+
+       </div>
+       <div class="post-footer">
+        <div class="meta">
+         <div class="info">
+          <i class="fa fa-sun-o"></i>
+          <span class="date">2025-01-01</span>
+          <i class="fa fa-tag"></i>
+          
+          <a class="tag" href="https://blog.dp7.xyz/tag/Xwq2QS4kYK/" title="代码审计">代码审计 </a>
+          
+          <a class="tag" href="https://blog.dp7.xyz/tag/DScmXl42K/" title="安全学习">安全学习 </a>
+          
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="share">
+       <div class="evernote">
+        <a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a>
+       </div>
+       <div class="weibo">
+        <a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a>
+       </div>
+       <div class="twitter">
+        <a class="fa fa-twitter" href="http://twitter.com/home?status=,https://blog.dp7.xyz/post/p1bHKt6UWT/,;"></a>
+       </div>
+      </div>
+      <div class="pagination">
+       <ul class="clearfix">
+
+        <li class="pre pagbuttons"><a class="btn" role="navigation" href="https://blog.dp7.xyz/post/wMjErW_kp5/" title="PHP审计实战-bluecms审计_XSS">上一篇</a></li>
+         
+        
+        <li class="next pagbuttons"><a class="btn" role="navigation" href="https://blog.dp7.xyz/post/IU7CgSD95M/" title=" Web狗的近源渗透记录">下一篇</a></li>
+        
+       </ul>
+      </div>
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'dce8c8190903e67ed74c',
+    clientSecret: 'ec34e710b1d3b83c7911d1895c48ddb0e7014dd0',
+    repo: '14u9h.github.io',
+    owner: '14u9h',
+    admin: ['14u9h'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+          
+        
+     </div>
+    </div>
+   </div>
+  </div>
+ <script src="https://blog.dp7.xyz/media/scripts/jquery.js"></script>
+  <script src="https://blog.dp7.xyz/media/scripts/jquery-migrate-1.2.1.min.js"></script>
+  <script src="https://blog.dp7.xyz/media/scripts/jquery.appear.js"></script>
+
+
+ </body>
+</html>

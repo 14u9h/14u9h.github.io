@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+ <head>
+     <meta charset="utf-8" />
+  <title>DREAD威胁评级模型 | 14u9h&#39;Blog</title>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+  <link rel="stylesheet" href="https://blog.dp7.xyz/styles/main.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.9.0/highlightjs-line-numbers.min.js"></script> -->
+  <!-- 行号加上样式就有问题了，暂时不加 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      hljs.highlightAll();
+      hljs.initLineNumbersOnLoad();
+    });
+  </script>
+ </head>
+ <body>
+     <div class="sidebar animated fadeInDown">
+   <div class="logo-title">
+    <div class="title">
+     <img class="avatar" src="https://blog.dp7.xyz/images/avatar.png?v=1756089800663" width="180" height="128" />
+
+     <div class="description">
+      <p>#流水不腐，户枢不蠹。</p>
+     </div>
+    </div>
+   </div>
+   <ul class="social-links">
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+   </ul>
+   <div class="footer">
+    <div class="by_farbox">
+   Powered by <a href="https://github.com/14u9h/" target="_blank">14u9h</a>
+    </div>
+    
+
+    </div>
+   </div>
+  </div>
+  <div class="main">
+     <div class="page-top animated fadeInDown">
+    <div class="nav">
+    
+     <li><a  href="/">首页</a></li>
+
+     <li><a  href="/archives">归档</a></li>
+
+     <li><a  href="/tags">标签</a></li>
+
+     <li><a  href="/post/about">关于</a></li>
+
+     <li><a  href="/post/Links">友链</a></li>
+
+    </div>
+    <div class="information">
+     <div class="back_btn">
+      <li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li>
+     </div>
+    </div>
+   </div>
+   <div class="autopagerize_page_element">
+    <div class="content">
+     <div class="post-page">
+      <div class="post animated fadeInDown">
+       <div class="post-title">
+        <h3><a>DREAD威胁评级模型</a></h3>
+       </div>
+       <div class="post-content">
+        <p>DREAD模型是微软提出的威胁评级模型，由六个指标评定；</p>
+<ul>
+<li>潜在损失(Damage Potential) 如果缺陷被利用，损失有多大？</li>
+<li>重现性(Reproducibility) 重复产生攻击的难度有多大？</li>
+<li>可利用性(Exploitability) 发起攻击的难度有多大？</li>
+<li>受影响的用户(Affected users) 用粗略的百分数表示，有多少用户受到影响？</li>
+<li>可发现性(Discoverability) 缺陷容易发现吗？</li>
+</ul>
+<!-- more -->
+<figure data-type="image" tabindex="1"><img src="https://blog.dp7.xyz/post-images/1575270079471.png" alt="" loading="lazy"></figure>
+<p>计算方式：</p>
+<p>一个漏洞具体的等级，可以按照上面的标准，计算给定威胁的值 (1–3)。结果范围为 5–15。这样就可以将总分 12–15 的威胁评价为高度危险，8–11 的威胁评价为中度危险，5–7 的威胁评价为低度危险。</p>
+<p>《白帽子讲web安全》给出了如下例子：</p>
+<ol>
+<li>网站登陆页面存在暴利破解：D(3)+ R(3) + E(3) + A(3) + D(3) = 15</li>
+<li>密码找回存在逻辑漏洞：D(3)+ R(3) + E(3) + A(3) + D(2) = 14</li>
+<li>密码可能被嗅探：D(3) + R(3) + E(3) + A(1) + D(3) = 13</li>
+<li>服务端脚本漏洞（如SQL等）: D(3) + R(3) + E(2) + A(3) + D(1) = 12</li>
+<li>钓鱼网站：D(3) + R(1) + E(3) + A(2) + D(3) = 12</li>
+<li>XSS或其他客户端威胁：D(3) + R(2) + E(2) + A(2) + D(2) = 11</li>
+<li>病毒或木马：D(3) + R(1) + E(2) + A(1) + D(1) = 8</li>
+</ol>
+<p>根据计算结果，我们可以得出漏洞的具体等级。</p>
+<p>参考：</p>
+<p>安全内参：https://www.secrss.com/articles/3298</p>
+<p>安全漏洞如何评级？ - 安惞的回答 - 知乎<br>
+https://www.zhihu.com/question/53669275/answer/136328786</p>
+<p>《白帽子讲Web安全》</p>
+
+       </div>
+       <div class="post-footer">
+        <div class="meta">
+         <div class="info">
+          <i class="fa fa-sun-o"></i>
+          <span class="date">2018-11-26</span>
+          <i class="fa fa-tag"></i>
+          
+          <a class="tag" href="https://blog.dp7.xyz/tag/Vai0_DxDh/" title="安全建设">安全建设 </a>
+          
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="share">
+       <div class="evernote">
+        <a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a>
+       </div>
+       <div class="weibo">
+        <a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a>
+       </div>
+       <div class="twitter">
+        <a class="fa fa-twitter" href="http://twitter.com/home?status=,https://blog.dp7.xyz/post/2018-DREAD/,;"></a>
+       </div>
+      </div>
+      <div class="pagination">
+       <ul class="clearfix">
+
+        <li class="pre pagbuttons"><a class="btn" role="navigation" href="https://blog.dp7.xyz/post/2019-CVE-2018-20250/" title="Winrar目录穿越漏洞复现-CVE-2018-20250">上一篇</a></li>
+         
+        
+        <li class="next pagbuttons"><a class="btn" role="navigation" href="https://blog.dp7.xyz/post/2017-sqlmap-usage/" title=" Sqlmap使用文档">下一篇</a></li>
+        
+       </ul>
+      </div>
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'dce8c8190903e67ed74c',
+    clientSecret: 'ec34e710b1d3b83c7911d1895c48ddb0e7014dd0',
+    repo: '14u9h.github.io',
+    owner: '14u9h',
+    admin: ['14u9h'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+          
+        
+     </div>
+    </div>
+   </div>
+  </div>
+ <script src="https://blog.dp7.xyz/media/scripts/jquery.js"></script>
+  <script src="https://blog.dp7.xyz/media/scripts/jquery-migrate-1.2.1.min.js"></script>
+  <script src="https://blog.dp7.xyz/media/scripts/jquery.appear.js"></script>
+
+
+ </body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+ <head>
+     <meta charset="utf-8" />
+  <title>Web狗的近源渗透记录 | 14u9h&#39;Blog</title>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+  <link rel="stylesheet" href="https://blog.dp7.xyz/styles/main.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.9.0/highlightjs-line-numbers.min.js"></script> -->
+  <!-- 行号加上样式就有问题了，暂时不加 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      hljs.highlightAll();
+      hljs.initLineNumbersOnLoad();
+    });
+  </script>
+ </head>
+ <body>
+     <div class="sidebar animated fadeInDown">
+   <div class="logo-title">
+    <div class="title">
+     <img class="avatar" src="https://blog.dp7.xyz/images/avatar.png?v=1756089800663" width="180" height="128" />
+
+     <div class="description">
+      <p>#流水不腐，户枢不蠹。</p>
+     </div>
+    </div>
+   </div>
+   <ul class="social-links">
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+   </ul>
+   <div class="footer">
+    <div class="by_farbox">
+   Powered by <a href="https://github.com/14u9h/" target="_blank">14u9h</a>
+    </div>
+    
+
+    </div>
+   </div>
+  </div>
+  <div class="main">
+     <div class="page-top animated fadeInDown">
+    <div class="nav">
+    
+     <li><a  href="/">首页</a></li>
+
+     <li><a  href="/archives">归档</a></li>
+
+     <li><a  href="/tags">标签</a></li>
+
+     <li><a  href="/post/about">关于</a></li>
+
+     <li><a  href="/post/Links">友链</a></li>
+
+    </div>
+    <div class="information">
+     <div class="back_btn">
+      <li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li>
+     </div>
+    </div>
+   </div>
+   <div class="autopagerize_page_element">
+    <div class="content">
+     <div class="post-page">
+      <div class="post animated fadeInDown">
+       <div class="post-title">
+        <h3><a>Web狗的近源渗透记录</a></h3>
+       </div>
+       <div class="post-content">
+        <p>在我刚入行的时候，带头大哥总CPU我说：“作为一线的渗透测试人员，除了生孩子不会，其他东西都得会一些。”，时过境迁，我深以为然。</p>
+<!-- more -->
+<p>对网络安全越来越重视的今天，Web狗越来越难以生存，我深谙出奇招方能致奇胜的思想，于是，一名Web狗开始了近源渗透之旅。<br>
+(Ps：记录一下使用过的近源手段，非常基础，不喜勿喷。<br>
+开始前叠层Buff：一知半解半桶水，如有错误恳请斧正。)</p>
+<h3 id="0x1-wifi">0x1 WIFI</h3>
+<h4 id="0x11-wi-fi万能钥匙">0x1.1 WI-FI万能钥匙</h4>
+<p>无论是有密级的机关，还是小微企业，Wi-Fi万能钥匙总是能给人带来意想不到的惊喜，而现在的手机，无论安卓还是苹果，再也不用root后翻目录找连上的Wi-Fi密码了。<br>
+<img src="https://blog.dp7.xyz/post-images/1730538538630.png" alt="" loading="lazy"></p>
+<h4 id="0x12-aircrack-ng">0x1.2 Aircrack-ng</h4>
+<p>眼下在企业中几乎碰不到WPE和WPA的热点，基本都是WPA2的，这里只写WPA2的破解。</p>
+<h5 id="软件与硬件">软件与硬件</h5>
+<p><s>airport</s>(2024年，官方停用了airport命令行工具，目前没有找到替代品，无奈启用虚拟机)<br>
+1、虚拟机安装kali系统<br>
+2、Aircrack-ng<br>
+3、免驱动无线网卡</p>
+<h5 id="抓取无线数据包">抓取无线数据包</h5>
+<p><strong>1、启动监听模式</strong></p>
+<pre class="hljs-pre"><code class="hljs hljs-text">iwconfig    // 插入无线网卡后，连接至虚拟机中，通过iwconfig查看网卡名称
+
+sudo airmon-ng start wlan0    // 启动网卡的监听模式，网卡名称为&quot;wlan0&quot;
+
+iwconfig    // 再次查看网卡信息，现在应该是Monitor(监听)模式了
+
+</code></pre>
+<p><strong>2、查看附近热点信息</strong></p>
+<pre class="hljs-pre"><code class="hljs hljs-text">sudo airodump-ng wlan0mon    // &quot;wlan0mon&quot;为启用监听模式后的网卡名
+</code></pre>
+<p><img src="https://blog.dp7.xyz/post-images/1730538589558.png" alt="" loading="lazy"><br>
+主要参数含义：</p>
+<ol>
+<li>BSSID：为目标的mac地址</li>
+<li>PWR：与目标的距离，该值越大，距离越近</li>
+<li>CH：信道</li>
+<li>ENC：加密方式，可以看到，都是wpa2的</li>
+<li>ESSID：wifi的名称</li>
+</ol>
+<p><strong>3、捕获握手包</strong></p>
+<pre class="hljs-pre"><code class="hljs hljs-text">sudo airodump-ng --bssid XX:XX:XX:XX -c 11 -w output wlan0mon
+
+# 不加--bssid XX:XX:XX:XX -c 11，则捕获附近全部热点数据包，如果附近的热点比较干净(企业大院)，则可以使用这种广撒网的方式捕获。
+</code></pre>
+<p>参数含义：</p>
+<ul>
+<li>--bssid是ap的BSSID</li>
+<li>-c指的是信道</li>
+<li>-w保存的文件名</li>
+<li>wlan0mon为网卡名称</li>
+</ul>
+<p>这是可能捕获到认证握手包：<br>
+<img src="https://blog.dp7.xyz/post-images/1730538608274.png" alt="" loading="lazy"><br>
+这是没有捕获到认证握手包：<br>
+<img src="https://blog.dp7.xyz/post-images/1730538623903.png" alt="" loading="lazy"><br>
+上图，下面那一栏表示有一个客户端连接热点，这个时候或许有几率抓到认证握手包了，若抓包过程中一直没有新的客户端连接进来，则可以尝试ack攻击，使已经连接上的设备断开重连。</p>
+<p><strong>4、ACK攻击</strong></p>
+<pre class="hljs-pre"><code class="hljs hljs-text">2.4GHz：
+sudo aireplay-ng -0 90 -a mac1 -c mac2 wlan0mon
+
+5GHz：
+sudo aireplay-ng -0 90 -a mac1 -c mac2 -D wlan0mon
+
+
+# aireplay-ng -0 攻击次数 -a 路由器MAC地址 -c 目标MAC地址
+# -0 90 意思是攻击90次，一般尽量在60-100之间不易过多，不宜过少。若过少会发生''Packets contained no EAPOL data; unable to process this AP''错误即抓取不到数据包
+# 如果不使用-c参数指定受害者MAC地址，那么就是对AP下面所有的终端进行攻击
+</code></pre>
+<p>抓到认证包后可以先尝试跑一下密码，以防出现误报，确认本地能跑密码后，发回给后台的小伙伴跑字典。</p>
+<h5 id="aircrack-ng跑密码">Aircrack-ng跑密码</h5>
+<p>重要的还得看字典：</p>
+<pre class="hljs-pre"><code class="hljs ">aircrack-ng -w pass.txt output.cap
+</code></pre>
+<p>参数说明：</p>
+<ul>
+<li>-w：跟密码字典</li>
+<li>pass.txt：密码字典文件</li>
+<li>output.cap：捕获到的数据包</li>
+</ul>
+<p><img src="https://blog.dp7.xyz/post-images/1730538644256.png" alt="" loading="lazy"><br>
+这是没有捕获到身份认证的数据包：<br>
+<img src="https://blog.dp7.xyz/post-images/1730538659351.png" alt="" loading="lazy"></p>
+<p>结束后关掉监听模式</p>
+<pre class="hljs-pre"><code class="hljs ">sudo airmon-ng stop wlan0mon
+</code></pre>
+<p>启动网络</p>
+<pre class="hljs-pre"><code class="hljs ">service network-manager start
+</code></pre>
+<h3 id="0x2-终端机">0x2 终端机</h3>
+<h4 id="0x21-windows系统">0x2.1 Windows系统</h4>
+<p>这里只写终端机的绕过，背后的网线归到暴露的网口类。</p>
+<h5 id="左右边缘向中间划动">左右边缘向中间划动</h5>
+<p>此举为调出隐藏在边缘的虚拟键盘，此类终端在实战中相对常见<br>
+<img src="https://blog.dp7.xyz/post-images/1730538688573.png" alt="" loading="lazy"><br>
+<img src="https://blog.dp7.xyz/post-images/1730538719043.png" alt="" loading="lazy"></p>
+<h5 id="未响应退出程序">未响应退出程序</h5>
+<p>在终端机进行工作时，比如打印票据，多次连续点击程序，可造成程序进程未响应，点退出程序即可看到桌面<br>
+<img src="https://blog.dp7.xyz/post-images/1730538733755.png" alt="" loading="lazy"></p>
+<h5 id="打印绕过">打印绕过</h5>
+<p>还没遇到过，找的网图，大概就是焦点选中文字后长按，调出“打印”功能，或者其他能调用“打印”的地方，从而进入到资源管理器绕过。<br>
+<img src="https://blog.dp7.xyz/post-images/1730538746504.png" alt="" loading="lazy"></p>
+<h5 id="超链接绕过">超链接绕过</h5>
+<p>没记录图片，找的网图，终端机上常见的超链接有url和邮件地址，大概就是通过超链接调用邮箱和浏览器程序。<br>
+<img src="https://blog.dp7.xyz/post-images/1730538759048.png" alt="" loading="lazy"></p>
+<h5 id="重启大法">重启大法</h5>
+<p><strong>注意⚠️：运气好就遇到空密码或者设置本机自动登录的机器，运气不好就干瞪着锁屏界面</strong><br>
+<img src="https://blog.dp7.xyz/post-images/1730538771967.png" alt="" loading="lazy"></p>
+<h5 id="厂商后门">厂商后门</h5>
+<p>有时候厂商为了调试方便，会给自助终端机留下后门，这里记录遇到的后门方式，不限期更新。<br>
+<strong>连续点击logo</strong></p>
+<h4 id="0x22-android系统">0x2.2 Android系统</h4>
+<p>目前还没见到过iOS或者鸿蒙系统的自助机，以后或许会见到。</p>
+<h5 id="门禁面板">门禁面板</h5>
+<p>为什么要单独拿出来写呢，因为首先门禁面板一般都在室外，若接入的还是内网，则有可能直捣黄龙，唯一要注意的是，找个人少的门，以及授权进行。<br>
+底部上滑和顶部下拉可尝试退出应用程序的置顶显示。<br>
+开启面板热点：<br>
+<img src="https://blog.dp7.xyz/post-images/1730538789388.png" alt="" loading="lazy"></p>
+<h3 id="0x3-暴露的网口线">0x3 暴露的网口/线</h3>
+<p>这个没啥好说的，闲置的口、终端机后面的口以及终端机里面的口，最离谱的是某目标下属商场搞活动而牵出来的网线，掏出连接器就是干，当然这些都不是重点。<br>
+<img src="https://blog.dp7.xyz/post-images/1730538800644.png" alt="" loading="lazy"><br>
+终端机开着散热：<br>
+<img src="https://blog.dp7.xyz/post-images/1730538812704.png" alt="" loading="lazy"></p>
+<h4 id="0x31-来点硬件">0x3.1 来点硬件</h4>
+<p>1、充电宝提供电源<br>
+2、4G工控路由器<br>
+这是第一次尝试借用已有硬件进行近源，使用的4G工控路由器，口红大小，开始没弄懂它的拓扑，弄懂了以后才知道它得改网关，最大化利用最多只能通同网段设备，只能祈祷同网段下有软柿子可以捏作为跳板打出去。<br>
+只能算迈出去半步吧，后面还得自己折腾个可双网的系统。<br>
+<img src="https://blog.dp7.xyz/post-images/1730538824903.png" alt="" loading="lazy"></p>
+<h4 id="0x32-来点软件">0x3.2 来点软件</h4>
+<p><strong>Wireshark</strong></p>
+<h5 id="信息收集">信息收集</h5>
+<p>插入网线后，即便静态IP没有配置，也能抓到路由那边广播出来的流量，可以使用Wireshark大致确认有哪些<strong>网段</strong>、是<strong>什么设备</strong>、确认<strong>网关IP</strong>、<strong>物理地址</strong>信息，比主动探测能惊动设备的概率小多了<br>
+<img src="https://blog.dp7.xyz/post-images/1730538838140.png" alt="" loading="lazy"></p>
+<h5 id="绕过绑定mac">绕过绑定Mac</h5>
+<p>网线直插孤岛设备可以抓到它配置的IP地址和网卡物理地址，直接狸猫换太子，拔掉终端机网线伪冒它的IP和Mac地址<br>
+macOS更改网卡物理地址：</p>
+<pre class="hljs-pre"><code class="hljs ">sudo ifconfig [网卡名] ether [Mac地址]
+</code></pre>
+<p>抓取孤岛设备流量如图：<br>
+<img src="https://blog.dp7.xyz/post-images/1730538851687.png" alt="" loading="lazy"></p>
+<h3 id="0x4-突破门禁">0x4 突破门禁</h3>
+<h4 id="0x41-密码按印">0x4.1 密码按印</h4>
+<p>在一些重要场所内，会单独给房间安装密码门禁，有时候按的多了就会留下印子，特别是过惯了苦日子的国人不舍得撕掉保护膜，手印更明显，更或许所有门禁密码都是通用的。<br>
+<img src="https://blog.dp7.xyz/post-images/1730538865003.png" alt="" loading="lazy"></p>
+<h4 id="0x42-感应门禁">0x4.2 感应门禁</h4>
+<p>见到许多单位门口有人脸/指纹/密码/NFC门禁，但内侧搭配着感应器，简直就是摆设，记得无糖发过用喷雾打开感应门禁的视频，用不着这么麻烦，在实战中，同伙就地取材找了根细长小竹条顺着门缝顶部(感应器)捅进去晃一晃就开了。</p>
+<h3 id="0x5-结言">0x5 结言</h3>
+<p>基本都是没啥技术含量的东西，就讲究个小心试探大胆操作。<br>
+快打快撤，待的时间越长，人的警惕性和盘查的决心就越大，遇到警惕性更高的员工几率更大。</p>
+<p>最最重要的，联络人最好能在五分钟内路程到场，不然被发现后带离关几小时再让通信就不好玩了<br>
+渗透手段千万条，授权守法第一条。<br>
+渗透测试不规范，亲人女友两行泪。<br>
+最后祝大家，工作顺利。<br>
+<img src="https://blog.dp7.xyz/post-images/1730538917068.png" alt="" loading="lazy"></p>
+
+       </div>
+       <div class="post-footer">
+        <div class="meta">
+         <div class="info">
+          <i class="fa fa-sun-o"></i>
+          <span class="date">2024-11-02</span>
+          <i class="fa fa-tag"></i>
+          
+          <a class="tag" href="https://blog.dp7.xyz/tag/yLy_N24qO/" title="渗透打点">渗透打点 </a>
+          
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="share">
+       <div class="evernote">
+        <a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a>
+       </div>
+       <div class="weibo">
+        <a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a>
+       </div>
+       <div class="twitter">
+        <a class="fa fa-twitter" href="http://twitter.com/home?status=,https://blog.dp7.xyz/post/IU7CgSD95M/,;"></a>
+       </div>
+      </div>
+      <div class="pagination">
+       <ul class="clearfix">
+
+        <li class="pre pagbuttons"><a class="btn" role="navigation" href="https://blog.dp7.xyz/post/p1bHKt6UWT/" title="PHP代码审计_bluecms_SQLi">上一篇</a></li>
+         
+        
+        <li class="next pagbuttons"><a class="btn" role="navigation" href="https://blog.dp7.xyz/post/4qWSrpXKM/" title=" 网络空间攻击链-Cyber Kill Chain">下一篇</a></li>
+        
+       </ul>
+      </div>
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'dce8c8190903e67ed74c',
+    clientSecret: 'ec34e710b1d3b83c7911d1895c48ddb0e7014dd0',
+    repo: '14u9h.github.io',
+    owner: '14u9h',
+    admin: ['14u9h'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+          
+        
+     </div>
+    </div>
+   </div>
+  </div>
+ <script src="https://blog.dp7.xyz/media/scripts/jquery.js"></script>
+  <script src="https://blog.dp7.xyz/media/scripts/jquery-migrate-1.2.1.min.js"></script>
+  <script src="https://blog.dp7.xyz/media/scripts/jquery.appear.js"></script>
+
+
+ </body>
+</html>
