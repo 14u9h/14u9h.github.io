@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+ <head>
+     <meta charset="utf-8" />
+  <title>Codex Skill做JS逆向初体验 | 14u9h&#39;Blog</title>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+  <link rel="stylesheet" href="https://blog.dp7.xyz/styles/main.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.9.0/highlightjs-line-numbers.min.js"></script> -->
+  <!-- 行号加上样式就有问题了，暂时不加 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      hljs.highlightAll();
+      hljs.initLineNumbersOnLoad();
+    });
+  </script>
+ </head>
+ <body>
+     <div class="sidebar animated fadeInDown">
+   <div class="logo-title">
+    <div class="title">
+     <img class="avatar" src="https://blog.dp7.xyz/images/avatar.png?v=1772887367985" width="180" height="128" />
+
+     <div class="description">
+      <p>#流水不腐，户枢不蠹。</p>
+     </div>
+    </div>
+   </div>
+   <ul class="social-links">
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+   </ul>
+   <div class="footer">
+    <div class="by_farbox">
+   Powered by <a href="https://github.com/14u9h/" target="_blank">14u9h</a>
+    </div>
+    
+
+    </div>
+   </div>
+  </div>
+  <div class="main">
+     <div class="page-top animated fadeInDown">
+    <div class="nav">
+    
+     <li><a  href="/">首页</a></li>
+
+     <li><a  href="/archives">归档</a></li>
+
+     <li><a  href="/tags">标签</a></li>
+
+     <li><a  href="/post/about">关于</a></li>
+
+     <li><a  href="/post/Links">友链</a></li>
+
+    </div>
+    <div class="information">
+     <div class="back_btn">
+      <li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li>
+     </div>
+    </div>
+   </div>
+   <div class="autopagerize_page_element">
+    <div class="content">
+     <div class="post-page">
+      <div class="post animated fadeInDown">
+       <div class="post-title">
+        <h3><a>Codex Skill做JS逆向初体验</a></h3>
+       </div>
+       <div class="post-content">
+        <p>好久没写博客了。<br>
+去年开始，工作里会频繁接触到 JS 逆向，这几天又在玩 Codex，就想着：能不能做个 skill，让 AI 去干一部分 JS 逆向的活，当然这版只算是体验品，真要当作生产力起码得在工作中覆盖使用一段时间才行。</p>
+<!-- more -->
+<p>这是仓库: https://github.com/14u9h/js-url-auto-reverse</p>
+<p>先说结论：如果 token 成本能接受，用 Codex 做 JS 逆向是可行的。至少对渗透测试里常见的前端加密场景，已经够用了。<br>
+<img src="https://blog.dp7.xyz/post-images/1772885620299.png" alt="" loading="lazy"></p>
+<h4 id="安装-codex">安装 Codex</h4>
+<p>1、先安装 Node.js：<code>https://nodejs.org/zh-cn</code><br>
+2、使用 ZCF（推荐）：<code>npx zcf</code>，然后输入 1 选项先安装 Codex<br>
+3、或者 npm 安装 Codex：<code>npm install -g @openai/codex</code></p>
+<p>建议用 ZCF，能引导式配置第三方模型供应商 API，也方便装 MCP（这个很重要）。</p>
+<h4 id="skill-是什么">Skill 是什么</h4>
+<p>可以把它理解成“可复用的工作流 + 自动化脚本入口”。<br>
+说白了就是什么时候该做什么、先后顺序怎么走，AI 调用 skill 时就按写好的流程执行。</p>
+<p>下面是 Codex 根据我的要求，以及公开的 JS 逆向方法，给出的带脚本 Skill：<code>js-url-auto-reverse</code>。</p>
+<h4 id="目录结构">目录结构</h4>
+<pre class="hljs-pre"><code class="hljs hljs-text">js-url-auto-reverse
+├── SKILL.md                        # 技能主定义（触发条件、模式、流程、边界）
+├── agents/openai.yaml              # UI 元数据
+├── references
+│   ├── dynamic-mode-guidelines.md  # 动态模式触发条件与限制
+│   ├── hook-templates.js           # 运行时 Hook 模板
+│   ├── manual-fallback.md          # 自动失败时人工兜底流程
+│   ├── replay-validator-guide.md   # 重放验证使用说明
+│   ├── static-audit-checklist.md   # 静态审计检查项
+│   └── workspace-venv-policy.md    # 仅允许工作区虚拟环境策略
+├── scripts
+│   ├── fetch_js_from_url.py        # 抓取 HTML/JS/inline/dynamic import/worker/sw/wasm/sourcemap
+│   ├── deobfuscate_basic.py        # 基础去混淆
+│   ├── locate_js_candidates.py     # 自动候选定位（显式打分）
+│   ├── static_source_sink_audit.py # Source-Sink 静态审计与置信度
+│   ├── advanced_reverse_analysis.py# 高级分析（反调试/加密原语/指纹/WASM）
+│   ├── dynamic_capture_playwright.py # 动态捕获（Hook/控制台/CDP断点暂停 + summary-only摘要输出）
+│   ├── replay_validator.py         # 重放验证（adapter + vectors）
+│   ├── run_js_reverse_pipeline.py  # 总控入口（static/dynamic/auto + budget-level + force-dynamic/force-cdp + verbose-output）
+│   └── run_regression_tests.py     # 回归测试总入口
+└── tests/cases
+    ├── static-basic
+    ├── dynamic-import
+    └── mini-obfuscated
+</code></pre>
+<h4 id="为什么要做这个">为什么要做这个</h4>
+<p>做过逆向的人都知道，最耗精力的不一定是“算法本身”，而是前面的定位和筛选：文件太多、chunk 太碎、入口太散、环境太杂。</p>
+<p>这个 skill 的价值就在这：<br>
+把重复劳动抽成固定流程，让你把注意力集中在真正要判断的地方，比如：</p>
+<ul>
+<li>这条链路到底是不是加密链路</li>
+<li>这个 key 是硬编码、派生，还是服务端传递</li>
+<li>加密函数到底在哪个文件、哪一段调用链</li>
+</ul>
+<h4 id="这套流程怎么跑">这套流程怎么跑</h4>
+<p>总控会先做静态分析，再按证据情况决定是否进入动态流程，默认策略是：</p>
+<ul>
+<li><code>静态 -&gt; Hook 采集 -&gt; (必要时) CDP 断点暂停</code></li>
+<li>默认 <code>budget-level=low</code>，优先省成本</li>
+<li>只有 Hook 证据不够、Hook 失败，或你强制要求时，才升级到 CDP</li>
+</ul>
+<p>另外，输出默认是压缩摘要，完整日志会落盘在 <code>runs/</code> 目录。只有排障时，才建议开 <code>--verbose-output</code>，避免 token 爆炸。</p>
+<h4 id="实测感受">实测感受</h4>
+<p>我自己做了 4 次测试（2 次站点：1 靶场 + 1 实站，2 次 JS 逆向题），都能产出可用结果。</p>
+<p>用的时候直接在 Codex CLI 提需求即可。静态证据不足时，它会按策略自动升级动态采集（前提是 Playwright 依赖按文档装好）：</p>
+<blockquote>
+<p>使用 js-url-auto-reverse 逆向站点 httpx://XXXXXXXX:8080/#/login，得到登录接口账号密码加密密文的密钥、加密方法位置和关键调用链信息。</p>
+</blockquote>
+<figure data-type="image" tabindex="1"><img src="https://blog.dp7.xyz/post-images/1772885636461.png" alt="" loading="lazy"></figure>
+<p>或者直接要求提取某项数据，提供给它cookie就行：</p>
+<blockquote>
+<p>使用 js-url-auto-reverse 抓取这个站点的所有数字并求和: https://match.yuanrenxue.cn/match/14 ,Cookie: xxxxxxx</p>
+</blockquote>
+<p><img src="https://blog.dp7.xyz/post-images/1772885646306.png" alt="" loading="lazy"><br>
+<img src="https://blog.dp7.xyz/post-images/1772885655188.png" alt="" loading="lazy"><br>
+提供统计，使用gpt-5.3-Codex(<code>输入 $0.6600/M输出 $5.2800/M</code>)，完成统计猿人学困难难度逆向题，共消耗$0.28:<br>
+<img src="https://blog.dp7.xyz/post-images/1772885672239.png" alt="" loading="lazy"></p>
+<p>例如也可以直接跑命令：</p>
+<pre class="hljs-pre"><code class="hljs hljs-bash">python3 scripts/run_js_reverse_pipeline.py &quot;https://target&quot; --mode auto --allow-dynamic --budget-level low
+</code></pre>
+<h4 id="边界和预期">边界和预期</h4>
+<p>这个 skill 对常见前端签名/加密场景很有帮助。</p>
+<p>但如果是强对抗目标（重 WASM VM、服务端协同签名、强风控），可能会触发人工兜底流程：自动化没法稳定拉取或定位时，手动把关键文件保存到本地，再让 AI 继续审计，先把范围收敛下来。</p>
+<p>另外说清楚一点：它已经具备“自动化断点暂停采集”能力（CDP），但还不是完整的交互式人工单步调试器。</p>
+<h4 id="最后">最后</h4>
+<p>这东西可能对大佬来说不算新鲜，但对我来说，用实践的方式确实把 skill 和 MCP 跑通了，对这两块有了一定的概念。</p>
+
+       </div>
+       <div class="post-footer">
+        <div class="meta">
+         <div class="info">
+          <i class="fa fa-sun-o"></i>
+          <span class="date">2026-03-07</span>
+          <i class="fa fa-tag"></i>
+          
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="share">
+       <div class="evernote">
+        <a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a>
+       </div>
+       <div class="weibo">
+        <a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a>
+       </div>
+       <div class="twitter">
+        <a class="fa fa-twitter" href="http://twitter.com/home?status=,https://blog.dp7.xyz/post/anDBKX8Frx/,;"></a>
+       </div>
+      </div>
+      <div class="pagination">
+       <ul class="clearfix">
+
+        
+        <li class="next pagbuttons"><a class="btn" role="navigation" href="https://blog.dp7.xyz/post/0QW-U48nQ_/" title=" PHP审计实战-PHP开源探针SQLi">下一篇</a></li>
+        
+       </ul>
+      </div>
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'dce8c8190903e67ed74c',
+    clientSecret: 'ec34e710b1d3b83c7911d1895c48ddb0e7014dd0',
+    repo: '14u9h.github.io',
+    owner: '14u9h',
+    admin: ['14u9h'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+          
+        
+     </div>
+    </div>
+   </div>
+  </div>
+ <script src="https://blog.dp7.xyz/media/scripts/jquery.js"></script>
+  <script src="https://blog.dp7.xyz/media/scripts/jquery-migrate-1.2.1.min.js"></script>
+  <script src="https://blog.dp7.xyz/media/scripts/jquery.appear.js"></script>
+
+
+ </body>
+</html>
